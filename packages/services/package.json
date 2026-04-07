@@ -1,0 +1,22 @@
+{
+  "name": "@letscode/services",
+  "version": "1.0.0",
+  "description": "service packages",
+  "exports": {
+    "./service": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build":"tsc"
+  },
+  "keywords": [],
+  "author": "shubham <spl.sp999@gmail.com>",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@letscode/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "mailtrap": "^4.5.1"
+  }
+}
