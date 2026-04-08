@@ -10,6 +10,10 @@ const subscriberSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isSubscribed: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
