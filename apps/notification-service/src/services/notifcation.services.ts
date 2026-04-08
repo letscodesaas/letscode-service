@@ -1,4 +1,8 @@
-import { NotificationEvent, Subscriber } from "@letscode/databases/models";
+import {
+  NotificationEvent,
+  Subscriber,
+  EmailContent,
+} from "@letscode/databases/models";
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
 
@@ -17,22 +21,31 @@ export class NotificationService {
       const subscribers = await Subscriber.find({
         // @ts-ignore
         topic: "contest",
-      }).select("email").sort({
-        subscribe: 1
-      });
-      
+      })
+        .select("email")
+        .sort({
+          subscribe: 1,
+        });
+
       if (!subscribers || subscribers.length === 0) {
         return;
       }
-      await mailtrap.sendBulkMails({
-        from:"letscode",
+      const email_content = await EmailContent.findOne({
         // @ts-ignore
-        to:subscribers,
-        subject:'',
-        html:'',
-        category:''
+        topic: "",
       });
+      if (!email_content) {
+        return;
+      }
 
+      await mailtrap.sendBulkMails({
+        from: "letscode",
+        // @ts-ignore
+        to: subscribers,
+        subject: email_content.subject,
+        html: email_content.html,
+        category: email_content.category,
+      });
     } catch (error) {
       throw new Error(String(error));
     }
