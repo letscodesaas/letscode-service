@@ -1,0 +1,27 @@
+FROM ubuntu:latest
+
+WORKDIR /app 
+
+COPY package.json . 
+
+COPY pnpm-lock.yaml . 
+
+COPY pnpm-workspace.yaml .
+
+COPY packages/databases .
+
+COPY packages/services .
+
+COPY packages/eslint-config .
+
+COPY packages/typescript-config .
+
+COPY apps/notification-service . 
+
+RUN pnpm install 
+
+RUN pnpm build
+
+EXPOSE 3000
+
+CMD [ "pnpm", "start" ]
