@@ -6,6 +6,10 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    scheduled:{
+      type:Boolean,
+      default:false
+    },
     eventProcessed: {
       type: Boolean,
       default: false,
