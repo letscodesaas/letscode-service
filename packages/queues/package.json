@@ -1,0 +1,23 @@
+{
+  "name": "@letscode/queues",
+  "version": "1.0.0",
+  "description": "BullMQ service",
+  "exports": {
+    "./queues": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@letscode/typescript-config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "shubham <spl.sp999@gmail.com>",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bullmq": "^5.73.2",
+    "ioredis": "^5.10.1"
+  }
+}
