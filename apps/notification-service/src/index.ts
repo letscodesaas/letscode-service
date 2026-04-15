@@ -11,24 +11,24 @@ import { fileURLToPath } from "node:url";
 const app = new Hono();
 
 
-const _dirname = fileURLToPath(import.meta.url);
-const thread_path = path.join(_dirname, "../", "worker", "thread.js");
+// const _dirname = fileURLToPath(import.meta.url);
+// const thread_path = path.join(_dirname, "../", "worker", "thread.js");
 
-const result = worker(thread_path);
-result
-  .then((d) => {
-    console.log(d);
-  })
-  .catch((e) => {
-    console.log(e);
-  });
+// const result = worker(thread_path);
+// result
+//   .then((d) => {
+//     console.log(d);
+//   })
+//   .catch((e) => {
+//     console.log(e);
+//   });
 
 app.get("/", (c) => {
   c.status(200);
   return c.json({ message: "healthy" });
 });
 
-app.mount("/api/v1", router.fetch);
+app.route("/api/v1", router);
 
 connection(ENV.DB_URI)
   .then(() => {
