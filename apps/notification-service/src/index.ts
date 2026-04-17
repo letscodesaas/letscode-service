@@ -4,6 +4,7 @@ import { worker } from "./worker/worker.js";
 import { router } from "./routes/routes.js";
 import { connection } from "@letscode/databases/models";
 import { ENV } from "./env/env.js";
+import { cors } from 'hono/cors';
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,6 +24,14 @@ const app = new Hono();
 //     console.log(e);
 //   });
 
+app.use(
+  '*',
+  cors({
+    origin: '*', // allow all (dev only)
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  })
+);
+
 app.get("/", (c) => {
   c.status(200);
   return c.json({ message: "healthy" });
@@ -35,7 +44,7 @@ connection(ENV.DB_URI)
     serve(
       {
         fetch: app.fetch,
-        port: 3000,
+        port: 4000,
       },
       (info) => {
         console.log(`Server is running on http://localhost:${info.port}`);
