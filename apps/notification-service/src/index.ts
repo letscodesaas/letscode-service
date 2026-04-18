@@ -4,13 +4,12 @@ import { worker } from "./worker/worker.js";
 import { router } from "./routes/routes.js";
 import { connection } from "@letscode/databases/models";
 import { ENV } from "./env/env.js";
-import { cors } from 'hono/cors';
+import { cors } from "hono/cors";
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const app = new Hono();
-
 
 // const _dirname = fileURLToPath(import.meta.url);
 // const thread_path = path.join(_dirname, "../", "worker", "thread.js");
@@ -25,11 +24,11 @@ const app = new Hono();
 //   });
 
 app.use(
-  '*',
+  "*",
   cors({
-    origin: '*', // allow all (dev only)
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  })
+    origin: "*", // allow all (dev only)
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  }),
 );
 
 app.get("/", (c) => {
@@ -39,18 +38,22 @@ app.get("/", (c) => {
 
 app.route("/api/v1", router);
 
-connection(ENV.DB_URI)
-  .then(() => {
-    serve(
-      {
-        fetch: app.fetch,
-        port: 4000,
-      },
-      (info) => {
-        console.log(`Server is running on http://localhost:${info.port}`);
-      },
-    );
-  })
-  .catch((e) => {
-    console.log(e);
-  });
+if (ENV.DEV === "dev") {
+  connection(ENV.DB_URI)
+    .then(() => {
+      serve(
+        {
+          fetch: app.fetch,
+          port: 4000,
+        },
+        (info) => {
+          console.log(`Server is running on http://localhost:${info.port}`);
+        },
+      );
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+}
+
+export default app;

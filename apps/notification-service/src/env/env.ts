@@ -20,6 +20,11 @@ const _ENV = {
     : (() => {
         throw new Error("Account id required");
       })(),
+  DEV: process.env.DEV
+    ? process.env.DEV
+    : (() => {
+        throw new Error("DEV required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);
