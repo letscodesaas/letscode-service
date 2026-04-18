@@ -6,7 +6,7 @@ import {
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
 
-const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, true);
+const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, true,parseInt(ENV.ACCOUNT_ID));
 
 export class NotificationService {
   public async notify() {
