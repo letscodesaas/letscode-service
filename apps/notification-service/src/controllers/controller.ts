@@ -103,23 +103,35 @@ export class NotificationController {
 
   public async bulkMail(c: Context) {
     try {
-      const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, true);
+      const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, true,parseInt(ENV.ACCOUNT_ID) as number);
       const data = await c.req.json();
       const { topic, html, category, subject } = await data;
+      if (!topic || !html || !category || !subject) {
+        c.status(402);
+        return c.json({
+          message: "Html, category, subject, topic is required",
+        });
+      }
       const subscriber = await Subscriber.find({
         // @ts-ignore
         topic: topic,
         isSubscribed: true,
       }).select("email");
 
-      if (!subscriber || subscriber.length !== 0) {
+      if (!subscriber || subscriber.length === 0) {
         c.status(200);
         return c.json({ message: "No Subscribers" });
       }
+
+      await NotificationEvent.create({
+        topic: topic,
+        scheduled: true,
+        eventProcessed: false,
+      });
       const FROM = {
         name: "letscode@lets-code.co.in",
       };
-      await mailtrap.sendBulkMails({
+      const info = await mailtrap.sendBulkMails({
         from: FROM.name,
         // @ts-ignore
         to: subscriber,
@@ -127,6 +139,7 @@ export class NotificationController {
         subject: subject,
         html: html,
       });
+      console.log(info)
       c.status(200);
       return c.json({ message: "success" });
     } catch (error) {
@@ -199,14 +212,28 @@ export class NotificationController {
         })
         .on("error", (err) => {
           console.log(err);
-          c.status(402)
-          return c.json({message:'Failed to load the csv'})
+          c.status(402);
+          return c.json({ message: "Failed to load the csv" });
         });
       unlink(`${upload_path}/upload.csv`, (err) => {
         console.log(err);
       });
       c.status(201);
       return c.json({ message: "success" });
+    } catch (error) {
+      console.log(error);
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async stats(c: Context) {
+    try {
+      const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, false, 1234);
+      const params = await c.req.json();
+      const data = await mailtrap.sendStats(params);
+      c.status(200);
+      return c.json({ message: "success", data: data });
     } catch (error) {
       console.log(error);
       c.status(500);
