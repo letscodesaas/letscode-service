@@ -14,6 +14,12 @@ const _ENV = {
     : (() => {
         throw new Error("Mailtrap token required");
       })(),
+
+  ACCOUNT_ID: process.env.ACCOUNT_ID
+    ? process.env.ACCOUNT_ID
+    : (() => {
+        throw new Error("Account id required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);
