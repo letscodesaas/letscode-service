@@ -13,3 +13,4 @@ router.post("/bulkmail", notificationController.bulkMail);
 router.post("/scheduled", notificationController.scheduleNotification);
 router.get("/scheduled", notificationController.scheduleNotifications);
 router.post("/upload-csv", notificationController.uploadmails);
+router.post("/stats",notificationController.stats);

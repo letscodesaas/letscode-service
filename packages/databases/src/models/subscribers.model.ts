@@ -4,6 +4,7 @@ const subscriberSchema = new mongoose.Schema(
   {
     email: {
       type: String,
+      unique:false,
       required: true,
     },
     topic: {

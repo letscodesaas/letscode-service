@@ -16,6 +16,15 @@ import {
 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import csv from "csv-parser";
+import { worker } from "../worker/worker.js";
+
+const workerPath = path.join(
+  fileURLToPath(import.meta.url),
+  "..",
+  "..",
+  "worker",
+  "thread.js",
+);
 
 export class NotificationController {
   public async subscribe(c: Context) {
@@ -103,7 +112,6 @@ export class NotificationController {
 
   public async bulkMail(c: Context) {
     try {
-      const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, true,parseInt(ENV.ACCOUNT_ID) as number);
       const data = await c.req.json();
       const { topic, html, category, subject } = await data;
       if (!topic || !html || !category || !subject) {
@@ -112,34 +120,12 @@ export class NotificationController {
           message: "Html, category, subject, topic is required",
         });
       }
-      const subscriber = await Subscriber.find({
-        // @ts-ignore
-        topic: topic,
-        isSubscribed: true,
-      }).select("email");
-
-      if (!subscriber || subscriber.length === 0) {
-        c.status(200);
-        return c.json({ message: "No Subscribers" });
+      const _w = await worker(workerPath, data);
+      console.log(_w)
+      if (_w !== "done") {
+        c.status(402);
+        return c.json({ message: "something went wrong" });
       }
-
-      await NotificationEvent.create({
-        topic: topic,
-        scheduled: true,
-        eventProcessed: false,
-      });
-      const FROM = {
-        name: "letscode@lets-code.co.in",
-      };
-      const info = await mailtrap.sendBulkMails({
-        from: FROM.name,
-        // @ts-ignore
-        to: subscriber,
-        category: category,
-        subject: subject,
-        html: html,
-      });
-      console.log(info)
       c.status(200);
       return c.json({ message: "success" });
     } catch (error) {
@@ -202,19 +188,22 @@ export class NotificationController {
       await Topics.create({
         topic: topic,
       });
-      createReadStream(`${upload_path}/upload.csv`)
-        .pipe(csv())
-        .on("data", async (row) => {
-          await Subscriber.create({
-            email: row.email,
-            topic: topic,
-          });
-        })
-        .on("error", (err) => {
-          console.log(err);
-          c.status(402);
-          return c.json({ message: "Failed to load the csv" });
-        });
+
+      await new Promise((resolve, reject) => {
+        createReadStream(`${upload_path}/upload.csv`)
+          .pipe(csv())
+          .on("data", async (row) => {
+            const email = row.email?.trim();
+            if (!email) return;
+            await Subscriber.create({
+              email: row.email,
+              topic: topic,
+            });
+          })
+          .on("error", reject)
+          .on("end", resolve);
+      });
+
       unlink(`${upload_path}/upload.csv`, (err) => {
         console.log(err);
       });
@@ -229,11 +218,30 @@ export class NotificationController {
 
   public async stats(c: Context) {
     try {
-      const mailtrap = new MailTrapService(ENV.MAILTRAP_TOKEN, false, 1234);
-      const params = await c.req.json();
+      const mailtrap = new MailTrapService(
+        ENV.MAILTRAP_TOKEN,
+        false,
+        parseInt(ENV.ACCOUNT_ID),
+      );
+      const datainfo = await c.req.json();
+      const params = {
+        ...datainfo,
+      };
       const data = await mailtrap.sendStats(params);
       c.status(200);
       return c.json({ message: "success", data: data });
+    } catch (error) {
+      console.log(error);
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async pushEventsAPI(c: Context) {
+    try {
+      const data = await c.req.json();
+      c.status(200);
+      return c.json({ message: "success" });
     } catch (error) {
       console.log(error);
       c.status(500);

@@ -1,11 +1,11 @@
 import { MailtrapClient } from "mailtrap";
 
 export class MailTrapService extends MailtrapClient {
-  constructor(token: string, bulkoption: boolean,accountId:number) {
+  constructor(token: string, bulkoption: boolean, accountId: number) {
     super({
       token: token,
       bulk: bulkoption,
-      accountId:accountId
+      accountId: accountId,
     });
   }
 
@@ -51,7 +51,7 @@ export class MailTrapService extends MailtrapClient {
     html,
     category,
   }: {
-    from: string;
+    from: any;
     to: [
       {
         email: string;
@@ -63,9 +63,7 @@ export class MailTrapService extends MailtrapClient {
   }) {
     try {
       const response = await this.send({
-        from: {
-          email: from,
-        },
+        from: from,
         to: to,
         subject: subject,
         html: html,
@@ -82,7 +80,7 @@ export class MailTrapService extends MailtrapClient {
       const response = await this.stats.get(param as any);
       return response;
     } catch (error) {
-      throw new Error(String(error))
+      throw new Error(String(error));
     }
   }
 }
