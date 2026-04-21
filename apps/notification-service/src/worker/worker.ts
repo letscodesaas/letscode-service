@@ -1,7 +1,9 @@
 import { Worker } from "worker_threads";
 
-export const worker = async (path: string) => {
-  const w = new Worker(path);
+export const worker = async (path: string,data:any) => {
+  const w = new Worker(path,{
+    workerData:data
+  });
   return new Promise((resolve, reject) => {
     w.on("message", (value) => {
       resolve(value);
@@ -11,7 +13,9 @@ export const worker = async (path: string) => {
     });
 
     w.on("exit", (code) => {
-      reject(code);
+      if(code != 0){
+        reject(`exist code is - ${code}`);
+      }
     });
   });
 };
