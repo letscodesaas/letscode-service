@@ -27,17 +27,16 @@ export const process_emails = async () => {
       name: "Lets Code",
     };
 
-    for (const s of subscriber) {
       const info = await mailtrap.sendBulkMails({
         from: sender,
         // @ts-ignore
-        to: [{ email: s.email }],
+        to: [{ email: "letscode@letscode.co.in" }],
         category: category,
         subject: subject,
         html: html,
+        bcc:subscriber.map(u => ({ email: u.email }))
       });
-      await new Promise((resolve) => setTimeout(resolve, 4000));
-    }
+      console.log(info)
     parentPort?.postMessage("done");
     return;
   } catch (error) {

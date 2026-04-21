@@ -50,6 +50,7 @@ export class MailTrapService extends MailtrapClient {
     subject,
     html,
     category,
+    bcc
   }: {
     from: any;
     to: [
@@ -60,6 +61,7 @@ export class MailTrapService extends MailtrapClient {
     subject: string;
     html: string;
     category: string;
+    bcc:any
   }) {
     try {
       const response = await this.send({
@@ -68,6 +70,7 @@ export class MailTrapService extends MailtrapClient {
         subject: subject,
         html: html,
         category: category,
+        bcc:bcc
       });
       return response;
     } catch (error) {
