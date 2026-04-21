@@ -26,6 +26,11 @@ RUN npm install -g pnpm
 
 RUN pnpm install 
 
+# ✅ build shared packages first
+RUN pnpm --filter=@letscode/databases build
+RUN pnpm --filter=@letscode/services build
+
+
 RUN pnpm --filter=notification-service build
 
 EXPOSE 3000
