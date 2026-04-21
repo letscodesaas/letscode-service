@@ -48,9 +48,6 @@ importers:
       '@letscode/databases':
         specifier: workspace:*
         version: link:../../packages/databases
-      '@letscode/queues':
-        specifier: workspace:*
-        version: link:../../packages/queues
       '@letscode/services':
         specifier: workspace:*
         version: link:../../packages/services

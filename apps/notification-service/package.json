@@ -9,7 +9,6 @@
   "dependencies": {
     "@hono/node-server": "^1.19.12",
     "@letscode/databases": "workspace:*",
-    "@letscode/queues": "workspace:*",
     "@letscode/services": "workspace:*",
     "csv-parser": "^3.2.0",
     "dotenv": "^17.4.1",

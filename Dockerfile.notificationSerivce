@@ -2,21 +2,21 @@ FROM alpine:latest
 
 WORKDIR /app 
 
-COPY package.json . 
+COPY package.json ./ 
 
-COPY pnpm-lock.yaml . 
+COPY pnpm-lock.yaml ./ 
 
-COPY pnpm-workspace.yaml .
+COPY pnpm-workspace.yaml ./
 
-COPY packages/databases .
+COPY packages/databases ./packages/databases
 
-COPY packages/services .
+COPY packages/services ./packages/services
 
-COPY packages/eslint-config .
+COPY packages/eslint-config ./packages/eslint-config
 
-COPY packages/typescript-config .
+COPY packages/typescript-config ./packages/typescript-config
 
-COPY apps/notification-service . 
+COPY apps/notification-service ./apps/notification-service 
 
 RUN apk add nodejs
 
@@ -26,8 +26,8 @@ RUN npm install -g pnpm
 
 RUN pnpm install 
 
-RUN pnpm build 
+RUN pnpm --filter=notification-service build
 
 EXPOSE 3000
 
-CMD [ "pnpm", "start" ]
+CMD ["pnpm", "--filter", "notification-service", "start"]
