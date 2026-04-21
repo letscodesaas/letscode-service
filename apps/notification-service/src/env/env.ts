@@ -25,6 +25,11 @@ const _ENV = {
     : (() => {
         throw new Error("DEV required");
       })(),
+  PORT: process.env.PORT
+    ? process.env.PORT
+    : (() => {
+        throw new Error("PORT required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);

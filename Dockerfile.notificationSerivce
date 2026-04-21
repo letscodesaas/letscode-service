@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM alpine:latest 
 
 WORKDIR /app 
 
@@ -18,9 +18,15 @@ COPY packages/typescript-config .
 
 COPY apps/notification-service . 
 
+RUN apk add nodejs
+
+RUN apk add npm
+
+RUN npm install -g pnpm 
+
 RUN pnpm install 
 
-RUN pnpm build
+RUN pnpm build 
 
 EXPOSE 3000
 
