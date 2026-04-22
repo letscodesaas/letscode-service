@@ -50,7 +50,6 @@ export class MailTrapService extends MailtrapClient {
     subject,
     html,
     category,
-    bcc
   }: {
     from: any;
     to: [
@@ -61,7 +60,6 @@ export class MailTrapService extends MailtrapClient {
     subject: string;
     html: string;
     category: string;
-    bcc:any
   }) {
     try {
       const response = await this.send({
@@ -70,7 +68,6 @@ export class MailTrapService extends MailtrapClient {
         subject: subject,
         html: html,
         category: category,
-        bcc:bcc
       });
       return response;
     } catch (error) {
@@ -81,6 +78,22 @@ export class MailTrapService extends MailtrapClient {
   public async sendStats(param: Record<string, unknown>): Promise<unknown> {
     try {
       const response = await this.stats.get(param as any);
+      return response;
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  public async sendBatch(from:string,subject:string, html:string,subscriber:any) {
+    try {
+      const response = await this.batchSend({
+        base: {
+          from: { email: from },
+          subject: subject,
+          html:html,
+        },
+        requests:subscriber 
+      });
       return response;
     } catch (error) {
       throw new Error(String(error));
