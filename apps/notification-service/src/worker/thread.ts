@@ -1,7 +1,7 @@
 import { parentPort, workerData } from "worker_threads";
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
-import { Subscriber,connection } from "@letscode/databases/models";
+import { Subscriber, connection } from "@letscode/databases/models";
 
 export const process_emails = async () => {
   try {
@@ -20,6 +20,7 @@ export const process_emails = async () => {
     }).select("email -_id");
 
     if (!subscriber || subscriber.length === 0) {
+      parentPort?.postMessage("no subscribers");
       return;
     }
     const sender = {
@@ -27,16 +28,25 @@ export const process_emails = async () => {
       name: "Lets Code",
     };
 
-      const info = await mailtrap.sendBulkMails({
+    let recipients = [
+      {
+        email: "letscode669@gmail.com",
+      },
+    ];
+
+    const _p = subscriber.map((e) => {
+      return mailtrap.sendBulkMails({
         from: sender,
         // @ts-ignore
-        to: [{ email: "letscode@letscode.co.in" }],
+        to: [{ email: e.email }],
         category: category,
         subject: subject,
         html: html,
-        bcc:subscriber.map(u => ({ email: u.email }))
       });
-      console.log(info)
+    });
+
+    const info = await Promise.all(_p);
+    console.log(info);
     parentPort?.postMessage("done");
     return;
   } catch (error) {
