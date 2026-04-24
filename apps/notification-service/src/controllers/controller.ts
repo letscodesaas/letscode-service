@@ -86,8 +86,21 @@ export class NotificationController {
 
   public async topics(c: Context) {
     try {
-      const response = await Topics.find();
-      c.status(201);
+      const response = [];
+      const topics = await Topics.find();
+
+      for (const s of topics) {
+        const subscribe = await Subscriber.find({
+          // @ts-ignore
+          topic: s.topic as string,
+          isSubscribed: true,
+        });
+        response.push({
+          topics: s,
+          subscribers: subscribe.length,
+        });
+      }
+      c.status(200);
       return c.json({ message: "success", data: response });
     } catch (error) {
       console.log(error);
@@ -121,7 +134,7 @@ export class NotificationController {
         });
       }
       const _w = await worker(workerPath, data);
-      console.log(_w)
+      console.log(_w);
       if (_w !== "done") {
         c.status(402);
         return c.json({ message: "something went wrong" });
@@ -240,6 +253,7 @@ export class NotificationController {
   public async pushEventsAPI(c: Context) {
     try {
       const data = await c.req.json();
+      console.log(data);
       c.status(200);
       return c.json({ message: "success" });
     } catch (error) {
