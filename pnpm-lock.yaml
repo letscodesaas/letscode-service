@@ -26,6 +26,12 @@ importers:
       '@imagekit/nodejs':
         specifier: ^7.5.0
         version: 7.5.0
+      '@letscode/databases':
+        specifier: workspace:*
+        version: link:../../packages/databases
+      dotenv:
+        specifier: ^17.4.1
+        version: 17.4.1
       hono:
         specifier: ^4.12.14
         version: 4.12.14

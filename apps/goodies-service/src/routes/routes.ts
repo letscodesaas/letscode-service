@@ -1,15 +1,19 @@
 import { Hono } from "hono";
+import {Controller} from "../controllers/controller.js";
+
+const goodiesController = new Controller();
+
+
 export const router = new Hono();
 
 /* Goodies routes */
-router.get("/goodies");
-router.get("/goodie/:id");
-router.post("/goodies");
+router.get("/goodies",goodiesController.goodies);
+router.get("/goodie/:id",goodiesController.goodie);
+router.post("/goodies",goodiesController.addGoodie);
 router.patch("/goodies/:id");
 router.delete("/goodies/:id");
 
 /* Varient routes */
-router.post("/varient");
 router.put("/varient/:id");
 router.delete("/varient/:id");
 
