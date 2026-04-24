@@ -13,6 +13,7 @@ router.post("/bulkmail", notificationController.bulkMail);
 router.post("/scheduled", notificationController.scheduleNotification);
 router.get("/scheduled", notificationController.scheduleNotifications);
 router.post("/upload-csv", notificationController.uploadmails);
+router.post("/upload-existing-csv", notificationController.uploadExistingmails);
 router.post("/stats",notificationController.stats);
 router.post("/events",notificationController.pushEventsAPI);
 router.get("/emails/:topic",notificationController.managemails);

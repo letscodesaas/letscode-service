@@ -211,13 +211,76 @@ export class NotificationController {
             if (!email) return;
             const is_email_exists = await Subscriber.findOne({
               // @ts-ignore
-              email:row.email
+              email: row.email,
             });
-            if(is_email_exists) return;
+            if (is_email_exists) return;
             await Subscriber.create({
               email: row.email,
               topic: topic,
             });
+          })
+          .on("error", reject)
+          .on("end", resolve);
+      });
+
+      unlink(`${upload_path}/upload.csv`, (err) => {
+        console.log(err);
+      });
+      c.status(201);
+      return c.json({ message: "success" });
+    } catch (error) {
+      console.log(error);
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async uploadExistingmails(c: Context) {
+    try {
+      const data = await c.req.formData();
+      // @ts-ignore
+      const topic = data.get("topic");
+      const csv_file = data.get("csv_file") as File;
+      const upload_path = path.join(
+        fileURLToPath(import.meta.url),
+        "../",
+        "../",
+        "uploads",
+      );
+      const check_folder_exists = existsSync(upload_path);
+      if (!check_folder_exists) {
+        mkdirSync(upload_path);
+      }
+      const buffer = await csv_file.arrayBuffer();
+      const csv_data = Buffer.from(buffer);
+      writeFileSync(`${upload_path}/upload.csv`, csv_data);
+      const is_topic_exists = await Topics.findOne({
+        // @ts-ignore
+        topic: topic,
+      });
+
+      if (!is_topic_exists) {
+        c.status(404);
+        return c.json({ message: "topic not exists" });
+      }
+
+      await new Promise((resolve, reject) => {
+        createReadStream(`${upload_path}/upload.csv`)
+          .pipe(csv())
+          .on("data", async (row) => {
+            const email = row.email?.trim();
+            if (!email) return;
+            const is_email_exists = await Subscriber.findOne({
+              // @ts-ignore
+              email: email,
+              topic:topic
+            });
+            if (!is_email_exists) {
+              await Subscriber.create({
+                email: email,
+                topic: topic,
+              });
+            }
           })
           .on("error", reject)
           .on("end", resolve);
