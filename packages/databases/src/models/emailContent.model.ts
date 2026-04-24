@@ -14,6 +14,10 @@ const emailContentSchema = new mongoose.Schema(
     topic: {
       type: String,
     },
+    status:{
+      type:Boolean,
+      default:true
+    }
   },
   { timestamps: true },
 );

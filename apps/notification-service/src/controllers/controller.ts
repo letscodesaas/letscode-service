@@ -3,6 +3,7 @@ import {
   Subscriber,
   Topics,
   NotificationEvent,
+  EmailContent,
 } from "@letscode/databases/models";
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
@@ -208,6 +209,11 @@ export class NotificationController {
           .on("data", async (row) => {
             const email = row.email?.trim();
             if (!email) return;
+            const is_email_exists = await Subscriber.findOne({
+              // @ts-ignore
+              email:row.email
+            });
+            if(is_email_exists) return;
             await Subscriber.create({
               email: row.email,
               topic: topic,
@@ -256,6 +262,50 @@ export class NotificationController {
       console.log(data);
       c.status(200);
       return c.json({ message: "success" });
+    } catch (error) {
+      console.log(error);
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async managemail(c: Context) {
+    try {
+      const data = await c.req.json();
+      const { subject, category, html, topic } = data;
+      await EmailContent.create({
+        subject,
+        category,
+        html,
+        topic,
+      });
+      c.status(201);
+      return c.json({ message: "success" });
+    } catch (error) {
+      console.log(error);
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async managemails(c: Context) {
+    try {
+      const data = c.req.param("topic");
+      if (data === "all") {
+        const response = await EmailContent.find().sort({
+          createdAt: -1,
+        });
+        c.status(200);
+        return c.json({ message: "success", data: response });
+      }
+      const response = await EmailContent.find({
+        // @ts-ignore
+        topic: data,
+      }).sort({
+        createdAt: -1,
+      });
+      c.status(200);
+      return c.json({ message: "success", data: response });
     } catch (error) {
       console.log(error);
       c.status(500);

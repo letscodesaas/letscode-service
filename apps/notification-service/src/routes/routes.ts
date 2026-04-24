@@ -15,3 +15,5 @@ router.get("/scheduled", notificationController.scheduleNotifications);
 router.post("/upload-csv", notificationController.uploadmails);
 router.post("/stats",notificationController.stats);
 router.post("/events",notificationController.pushEventsAPI);
+router.get("/emails/:topic",notificationController.managemails);
+router.post("/emails",notificationController.managemail);
