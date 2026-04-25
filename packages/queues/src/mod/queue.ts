@@ -20,7 +20,7 @@ export class QueueInstance {
     const queue = new Queue(this.qname, {
       connection: connectionObj,
     });
-    await queue.setGlobalRateLimit(1, 4000);
+    // await queue.setGlobalRateLimit(1, 4000);
     return queue;
   }
   public async addJob(name: string, data: any) {

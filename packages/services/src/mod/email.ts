@@ -92,7 +92,7 @@ export class MailTrapService extends MailtrapClient {
           subject: subject,
           html:html,
         },
-        requests:subscriber 
+        requests:subscriber
       });
       return response;
     } catch (error) {

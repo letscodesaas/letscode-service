@@ -4,7 +4,7 @@ import {
   Topics,
   NotificationEvent,
   EmailContent,
-  NotificationStatus
+  NotificationStatus,
 } from "@letscode/databases/models";
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
@@ -139,20 +139,24 @@ export class NotificationController {
         // @ts-ignore
         topic: topic,
         isSubscribed: true,
-      });
+      }).select("email -_id");
+
+      let requests = []
+      for(const s of subscribers){
+        requests.push({
+          to:[{email:s.email}]
+        })
+      }
       const queue = new QueueInstance(ENV.REDIS_URL, "notification-queue");
       const topic_stamp = `${topic}-${new Date().toString()}`;
-
-      for (const s of subscribers) {
-        await queue.addJob("notify", {
-          email: s,
-          topic,
-          html,
-          category,
-          subject,
-          topic_stamp,
-        });
-      }
+      await queue.addJob("notify", {
+        email: requests,
+        topic,
+        html,
+        category,
+        subject,
+        topic_stamp,
+      });
       c.status(200);
       return c.json({ message: "success" });
     } catch (error) {
@@ -391,9 +395,12 @@ export class NotificationController {
 
   public async queueEvents(c: Context) {
     try {
-      const eventName = new QueueEventProcess("notification-queue", ENV.REDIS_URL);
+      const eventName = new QueueEventProcess(
+        "notification-queue",
+        ENV.REDIS_URL,
+      );
       const data = await eventName.processEvents();
-      console.log(data)
+      console.log(data);
       c.json(200);
       return c.json({ message: "success" });
     } catch (error) {
@@ -402,16 +409,16 @@ export class NotificationController {
     }
   }
 
-  public async notificationInfo(c:Context){
-    try {      
+  public async notificationInfo(c: Context) {
+    try {
       const data = await NotificationStatus.find().sort({
-        createdAt:-1
+        createdAt: -1,
       });
-      c.status(200)
-      return c.json({message:'success',data})
+      c.status(200);
+      return c.json({ message: "success", data });
     } catch (error) {
-      c.status(500)
-      return c.json({message:'Internal Server Error'})
+      c.status(500);
+      return c.json({ message: "Internal Server Error" });
     }
   }
 }
