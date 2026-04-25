@@ -12,6 +12,8 @@ COPY packages/databases ./packages/databases
 
 COPY packages/services ./packages/services
 
+COPY packages/queues ./packages/queues
+
 COPY packages/eslint-config ./packages/eslint-config
 
 COPY packages/typescript-config ./packages/typescript-config
@@ -29,6 +31,7 @@ RUN pnpm install
 # ✅ build shared packages first
 RUN pnpm --filter=@letscode/databases build
 RUN pnpm --filter=@letscode/services build
+RUN pnpm --filter=@letscode/queues build
 
 
 RUN pnpm --filter=notification-service build
