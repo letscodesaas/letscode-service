@@ -30,6 +30,11 @@ const _ENV = {
     : (() => {
         throw new Error("PORT required");
       })(),
+  REDIS_URL: process.env.REDIS_URL
+    ? process.env.REDIS_URL
+    : (() => {
+        throw new Error("REDIS_URL required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);

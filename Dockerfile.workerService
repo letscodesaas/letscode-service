@@ -1,0 +1,41 @@
+FROM alpine:latest 
+
+WORKDIR /app 
+
+COPY package.json ./ 
+
+COPY pnpm-lock.yaml ./ 
+
+COPY pnpm-workspace.yaml ./
+
+COPY packages/databases ./packages/databases
+
+COPY packages/services ./packages/services
+
+COPY packages/queues ./packages/queues
+
+COPY packages/eslint-config ./packages/eslint-config
+
+COPY packages/typescript-config ./packages/typescript-config
+
+COPY apps/worker-service ./apps/worker-service 
+
+RUN apk add nodejs
+
+RUN apk add npm
+
+RUN npm install -g pnpm 
+
+RUN pnpm install 
+
+# ✅ build shared packages first
+RUN pnpm --filter=@letscode/databases build
+RUN pnpm --filter=@letscode/services build
+RUN pnpm --filter=@letscode/queues build
+
+
+RUN pnpm --filter=worker-service build
+
+EXPOSE 3000
+
+CMD ["pnpm", "--filter", "worker-service", "start"]
