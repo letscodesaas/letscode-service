@@ -16,7 +16,7 @@ export class WorkerInstance {
     const connnection_obj = await this.connection();
     const _w = new Worker(
       this.qname,
-      async (job) => {
+      async (job:any) => {
         await cb(job);
       },
       {

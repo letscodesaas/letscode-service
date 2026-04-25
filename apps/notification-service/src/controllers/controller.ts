@@ -17,15 +17,15 @@ import {
 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import csv from "csv-parser";
-import { worker } from "../worker/worker.js";
+import { QueueInstance, QueueEventProcess } from "@letscode/queues/queues";
 
-const workerPath = path.join(
-  fileURLToPath(import.meta.url),
-  "..",
-  "..",
-  "worker",
-  "thread.js",
-);
+// const workerPath = path.join(
+//   fileURLToPath(import.meta.url),
+//   "..",
+//   "..",
+//   "worker",
+//   "thread.js",
+// );
 
 export class NotificationController {
   public async subscribe(c: Context) {
@@ -134,11 +134,23 @@ export class NotificationController {
           message: "Html, category, subject, topic is required",
         });
       }
-      const _w = await worker(workerPath, data);
-      console.log(_w);
-      if (_w !== "done") {
-        c.status(402);
-        return c.json({ message: "something went wrong" });
+      const subscribers = await Subscriber.find({
+        // @ts-ignore
+        topic: topic,
+        isSubscribed: true,
+      });
+      const queue = new QueueInstance(ENV.REDIS_URL, "notification-queue");
+      const topic_stamp = `${topic}-${new Date().toString()}`;
+
+      for (const s of subscribers) {
+        await queue.addJob("notify", {
+          email: s,
+          topic,
+          html,
+          category,
+          subject,
+          topic_stamp,
+        });
       }
       c.status(200);
       return c.json({ message: "success" });
@@ -273,7 +285,7 @@ export class NotificationController {
             const is_email_exists = await Subscriber.findOne({
               // @ts-ignore
               email: email,
-              topic:topic
+              topic: topic,
             });
             if (!is_email_exists) {
               await Subscriber.create({
@@ -373,6 +385,19 @@ export class NotificationController {
       console.log(error);
       c.status(500);
       return c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async queueEvents(c: Context) {
+    try {
+      const eventName = new QueueEventProcess("notification-queue", ENV.REDIS_URL);
+      const data = await eventName.processEvents();
+      console.log(data)
+      c.json(200);
+      return c.json({ message: "success" });
+    } catch (error) {
+      c.status(500);
+      c.json({ message: "Internal Server Error" });
     }
   }
 }

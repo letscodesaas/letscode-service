@@ -18,3 +18,4 @@ router.post("/stats",notificationController.stats);
 router.post("/events",notificationController.pushEventsAPI);
 router.get("/emails/:topic",notificationController.managemails);
 router.post("/emails",notificationController.managemail);
+router.get("/queue-event",notificationController.queueEvents);
