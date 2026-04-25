@@ -4,6 +4,7 @@ import {
   Topics,
   NotificationEvent,
   EmailContent,
+  NotificationStatus
 } from "@letscode/databases/models";
 import { MailTrapService } from "@letscode/services/service";
 import { ENV } from "../env/env.js";
@@ -398,6 +399,19 @@ export class NotificationController {
     } catch (error) {
       c.status(500);
       c.json({ message: "Internal Server Error" });
+    }
+  }
+
+  public async notificationInfo(c:Context){
+    try {      
+      const data = await NotificationStatus.find().sort({
+        createdAt:-1
+      });
+      c.status(200)
+      return c.json({message:'success',data})
+    } catch (error) {
+      c.status(500)
+      return c.json({message:'Internal Server Error'})
     }
   }
 }

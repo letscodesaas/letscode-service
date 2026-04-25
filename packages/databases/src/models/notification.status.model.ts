@@ -14,7 +14,6 @@ const notificationStatusSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "QUEUED",
     },
   },
   {
