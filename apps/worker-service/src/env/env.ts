@@ -24,6 +24,16 @@ const _ENV = {
     : (() => {
         throw new Error("DB_URI required");
       })(),
+  ACCESS_KEY: process.env.ACCESS_KEY
+    ? process.env.ACCESS_KEY
+    : (() => {
+        throw new Error("ACCESS_KEY required");
+      })(),
+  SECRET_KEY: process.env.SECRET_KEY
+    ? process.env.SECRET_KEY
+    : (() => {
+        throw new Error("SECRET_KEY required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);

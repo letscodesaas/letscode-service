@@ -140,17 +140,14 @@ export class NotificationController {
         topic: topic,
         isSubscribed: true,
       }).select("email -_id");
-
-      let requests = []
+      const request = []
       for(const s of subscribers){
-        requests.push({
-          to:[{email:s.email}]
-        })
+        request.push(s.email)
       }
       const queue = new QueueInstance(ENV.REDIS_URL, "notification-queue");
       const topic_stamp = `${topic}-${new Date().toString()}`;
       await queue.addJob("notify", {
-        email: requests,
+        email: request,
         topic,
         html,
         category,
