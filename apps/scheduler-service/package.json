@@ -14,7 +14,8 @@
     "node-cron": "^4.2.1"
   },
   "devDependencies": {
-    "@letscode/typescript-config": "workspace:*"
+    "@letscode/typescript-config": "workspace:*",
+    "@types/node": "^25.6.0"
   },
   "keywords": [],
   "author": "",

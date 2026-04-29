@@ -101,6 +101,9 @@ importers:
       '@letscode/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
 
   apps/video-service:
     dependencies:
