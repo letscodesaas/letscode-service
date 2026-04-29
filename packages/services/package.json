@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"tsc"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "shubham <spl.sp999@gmail.com>",
@@ -17,6 +17,7 @@
     "@letscode/typescript-config": "workspace:*"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1038.0",
     "mailtrap": "^4.5.1"
   }
 }

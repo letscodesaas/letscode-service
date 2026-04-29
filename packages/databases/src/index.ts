@@ -6,6 +6,7 @@ import { EmailContent } from "./models/emailContent.model.js";
 import { Goodies } from "./models/goodies.model.js";
 import { Variant } from "./models/variant.model.js";
 import { NotificationStatus } from "./models/notification.status.model.js";
+import { Questions } from "./models/question.model.js";
 import { connection } from "./connection.js";
 
-export { LogsEvent, NotificationEvent,NotificationStatus, Subscriber,Goodies,Variant, Topics,EmailContent,connection };
+export { LogsEvent,Questions, NotificationEvent,NotificationStatus, Subscriber,Goodies,Variant, Topics,EmailContent,connection };

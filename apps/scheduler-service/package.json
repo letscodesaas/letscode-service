@@ -1,0 +1,23 @@
+{
+  "name": "scheduler-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@letscode/databases": "workspace:*",
+    "dotenv": "^17.4.1",
+    "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
+    "@letscode/typescript-config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
