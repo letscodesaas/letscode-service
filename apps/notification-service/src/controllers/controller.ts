@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import {
+  connection,
   Subscriber,
   Topics,
   NotificationEvent,
@@ -27,7 +28,7 @@ import { QueueInstance, QueueEventProcess } from "@letscode/queues/queues";
 //   "worker",
 //   "thread.js",
 // );
-
+connection(ENV.DB_URI);
 export class NotificationController {
   public async subscribe(c: Context) {
     try {
