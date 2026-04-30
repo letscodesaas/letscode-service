@@ -8,7 +8,7 @@ dotenv.config({
 
 console.log("Service is on")
 
-cron.schedule("0 12 * * *", async () => {
+cron.schedule("0 14 * * *", async () => {
   try {
     await connection(process.env.DB!);
     const currentDate = new Date().getDate();
@@ -59,4 +59,6 @@ cron.schedule("0 12 * * *", async () => {
   } catch (error) {
     throw new Error(String(error))
   }
+},{
+  timezone:'Asia/Kolkata'
 });
