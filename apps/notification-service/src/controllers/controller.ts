@@ -128,18 +128,18 @@ export class NotificationController {
   public async bulkMail(c: Context) {
     try {
       const data = await c.req.json();
-      const { topic, html, category, subject } = await data;
-      if (!topic || !html || !category || !subject) {
+      const { topic, html, category, subject,limit } = await data;
+      if (!topic || !html || !category || !subject || !limit) {
         c.status(402);
         return c.json({
-          message: "Html, category, subject, topic is required",
+          message: "Html, category, subject, topic, limit is required",
         });
       }
       const subscribers = await Subscriber.find({
         // @ts-ignore
         topic: topic,
         isSubscribed: true,
-      }).select("email -_id");
+      }).select("email -_id").limit(parseInt(limit));
       const request = []
       for(const s of subscribers){
         request.push(s.email)
