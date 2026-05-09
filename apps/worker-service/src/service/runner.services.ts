@@ -55,7 +55,7 @@ export const runner = async (job: any) => {
           for (const emails of e) {
             const info = await sesClient.sendMails({
               Source: sender.email,
-              Destination: { ToAddresses: emails },
+              Destination: { ToAddresses: [emails] },
               Message: {
                 Subject: {
                   Data: subject,
