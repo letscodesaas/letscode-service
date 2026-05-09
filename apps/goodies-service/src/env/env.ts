@@ -16,6 +16,12 @@ const _ENV = {
     : (() => {
         throw new Error("IMAGE_KIT URL is required");
       })(),
+
+       SHIPROCKET_URL: process.env.SHIPROCKET_URL
+    ? process.env.SHIPROCKET_URL
+    : (() => {
+        throw new Error("SHIPROCKET_URL URL is required");
+      })(),
 };
 
 export const ENV = Object.freeze(_ENV);
